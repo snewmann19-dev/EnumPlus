@@ -5,7 +5,6 @@ export type EnumContainerMethods = {
 	GetEnumItems: (self: EnumContainerMethods) -> {EnumType}
 }
 export type EnumContainer = { [string]: {any} } & EnumContainerMethods
--- ^ If you would like for roblox EnumItem implementation
 export type EnumType = { [string]: EnumContainer }
 export type CustomEnumItem = {
 	Name: string,
@@ -14,27 +13,17 @@ export type CustomEnumItem = {
 	IsA: (self: CustomEnumItem, className: string) -> boolean
 }
 
-local REGISTER_CHILDREN = false
-
-local RobloxEnum = Enum
-local CustomEnums: EnumType = {
+-- We use a :: CustomEnumItem casting due to Roblox typechecking not being
+-- able to deal with us doing this. It works fine at runtime, but makes it
+-- harder to implement new CustomEnums. Make sure all CustomEnumItem values
+-- are a number that is casted with :: to CustomEnumItem.
+local CustomEnums = {
 	ExampleEnum = {
-		EnumValue0 = 0,
-		EnumValue1 = 1,
-		EnumValue2 = 2,
-	}
+		EnumValue0 = (0 :: CustomEnumItem),
+		EnumValue1 = (1 :: CustomEnumItem),
+		EnumValue2 = (2 :: CustomEnumItem),
+	},
 }
-
--- Register all the children if REGISTER_CHILDREN is set
-if REGISTER_CHILDREN then
-	for idx, obj in ipairs(script:GetChildren()) do
-		if obj:IsA("ModuleScript") then
-			-- The required module should return a table of name -> number
-			CustomEnums[obj.Name] = require(obj) :: EnumContainer
-		end
-	end
-end
-
 -- Utility for converting a table to an array
 local function toArray(tbl)
 	local result = {}
@@ -66,13 +55,13 @@ local function SetupEnumObjects(): ()
 				end
 				return nil
 			end;
-			
+
 			-- Gets all the items in the container as an array
 			GetEnumItems = function(self)
 				return toArray(customEnumItemContainer)
 			end,
 		}
-		
+
 		-- Use the methods table as the __index of the metatable so the methods are not
 		-- stored on the container itself (they won't appear in pairs()).
 		local mt = {
@@ -80,15 +69,15 @@ local function SetupEnumObjects(): ()
 			__newindex = function() end,
 			__metatable = "EnumContainerLocked" -- prevents external access
 		}
-		
+
 		customEnumItemContainer = setmetatable(customEnumItemContainer, mt)
-		
+
 		-- Set up the enum items (unchanged; keep items in the container table)
 		for name, value in pairs(customEnumItemContainer) do
 			-- skip metamethod keys if any accidentally show up; only handle numeric/string values
 			if type(name) == "string" and type(value) ~= "table" then
 				local newEnumObject = { EnumType = containerName }
-				
+
 				function newEnumObject:IsA(n: string)
 					if containerName == n then
 						return true
@@ -97,7 +86,7 @@ local function SetupEnumObjects(): ()
 					end
 					return false
 				end
-				
+
 				local metaData = {
 					__index = function(tbl, idx)
 						if idx == "Name" then
@@ -108,13 +97,13 @@ local function SetupEnumObjects(): ()
 							return containerName
 						end
 					end;
-					
+
 					__newindex = function() end;
-					
+
 					__tostring = function()
 						return string.format("Enum.%s.%s", containerName, name)
 					end;
-					
+
 					__eq = CheckEnumEquality
 				}
 				setmetatable(newEnumObject, metaData)
@@ -143,12 +132,12 @@ function GetProxyForEnum(index: string): EnumProxy
 				end
 				return CustomEnums[tbl._name][index2]
 			end,
-			
+
 			__newindex = function(tbl, index2, value)
 				-- Cannot add new indexes at runtime!
 				return nil
 			end,
-			
+
 			__tostring = function()
 				return index
 			end,
@@ -159,7 +148,7 @@ end
 
 local EnumsProxyTable = setmetatable({
 	--- Public methods ---
-	
+
 	-- Gets all registered enums as a an array
 	GetEnums = function(self: any)
 		return CustomEnums
@@ -178,11 +167,9 @@ local EnumsProxyTable = setmetatable({
 		-- Query if the Custom enum is found or RobloxEnums is found
 		if CustomEnums[index] ~= nil then
 			return GetProxyForEnum(index)
-		else
-			return RobloxEnum[index]
 		end
 	end,
-	
+
 	__newindex = function(tbl, index, value)
 		-- You cannot add indexes at runtime!
 		return nil
@@ -197,16 +184,6 @@ SetupEnumObjects()
 
 -- A helpful exported type for known enums so editors show autocompletion.
 -- Replace ExampleEnum below with real enum names + items if you want completion.
-export type EnumsModule = typeof(EnumsProxyTable) & {
-	-- Enum Items
-	ExampleEnum: {
-		EnumValue0: CustomEnumItem,
-		EnumValue1: CustomEnumItem,
-		EnumValue2: CustomEnumItem
-	} & EnumContainerMethods
-} --& typeof(RobloxEnum)
-
--- If you dont want primitive Roblox Enums showing up, remove the part
--- where is says & typeof(RobloxEnum), as it adds Roblox Enums to typechecker
+export type EnumsModule = typeof(EnumsProxyTable) & typeof(CustomEnums) & {[string]: EnumContainerMethods}
 
 return EnumsProxyTable :: EnumsModule
