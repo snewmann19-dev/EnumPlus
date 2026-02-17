@@ -6,7 +6,7 @@ You might be questioning, **what really makes EnumPlus different from other cust
 
 A massive downside for EnumPlus is typechecking. This module uses typeof() to typecheck the user-defined custom Enum types, which is not the best possible way to go about doing so. LUAU typechecking is not advanced enough to handle custom Enumerations, with defining a single integer value and then later turning it into .Value, .Name, and .EnumType. As this was the bad part of EnumPlus, I used <code>(‘integer’ :: CustomEnumItem)</code> to allow the typechecker to still show the <code>CustomEnumItem</code> type
 
-As it is a standalone module, there are zero dependencies, installation is as easy as:
+As it is a standalone module, there are zero dependencies, installation is as easy as defining:<br>
 <code>local EnumPlus = require(path.to.EnumPlus)</code>
 
 Enums are created and loaded at runtime, so you cannot add further Enums later on, which adds to the aspect of immutablility
