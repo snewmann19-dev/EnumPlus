@@ -13,9 +13,9 @@ Enums are created and loaded at runtime, so you cannot add further Enums later o
 
 You can add new Enums inside the EnumPlus module at line 20, where the local variable CustomEnums is defined. </br>
 <code>local CustomEnums = {
-	ExampleEnum = {
-		EnumValue0 = (0 :: CustomEnumItem),
-		EnumValue1 = (1 :: CustomEnumItem),
-		EnumValue2 = (2 :: CustomEnumItem),
-	},
+    ExampleEnum = {
+        EnumValue0 = (0 :: CustomEnumItem),
+        EnumValue1 = (1 :: CustomEnumItem),
+        EnumValue2 = (2 :: CustomEnumItem),
+     },
 }</code>
