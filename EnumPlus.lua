@@ -24,6 +24,7 @@ local CustomEnums = {
 		EnumValue2 = (2 :: CustomEnumItem),
 	},
 }
+
 -- Utility for converting a table to an array
 local function toArray(tbl)
 	local result = {}
@@ -33,7 +34,6 @@ local function toArray(tbl)
 	return result
 end
 
--- According to lua specs the actual *function* running __eq has to be the same.
 local function CheckEnumEquality(a: EnumItem, b: EnumItem): boolean
 	return a.EnumType == b.EnumType
 end
@@ -67,14 +67,12 @@ local function SetupEnumObjects(): ()
 		local mt = {
 			__index = enumContainerMethods,
 			__newindex = function() end,
-			__metatable = "EnumContainerLocked" -- prevents external access
+			__metatable = "EnumContainerLocked"
 		}
 
 		customEnumItemContainer = setmetatable(customEnumItemContainer, mt)
-
-		-- Set up the enum items (unchanged; keep items in the container table)
+		
 		for name, value in pairs(customEnumItemContainer) do
-			-- skip metamethod keys if any accidentally show up; only handle numeric/string values
 			if type(name) == "string" and type(value) ~= "table" then
 				local newEnumObject = { EnumType = containerName }
 
@@ -183,7 +181,6 @@ local EnumsProxyTable = setmetatable({
 SetupEnumObjects()
 
 -- A helpful exported type for known enums so editors show autocompletion.
--- Replace ExampleEnum below with real enum names + items if you want completion.
 export type EnumsModule = typeof(EnumsProxyTable) & typeof(CustomEnums) & {[string]: EnumContainerMethods}
 
 return EnumsProxyTable :: EnumsModule
