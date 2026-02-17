@@ -9,4 +9,13 @@ A massive downside for EnumPlus is typechecking. This module uses typeof() to ty
 As it is a standalone module, there are zero dependencies, installation is as easy as defining:</br>
 <code>local EnumPlus = require(path.to.EnumPlus)</code>
 
-Enums are created and loaded at runtime, so you cannot add further Enums later on, which adds to the aspect of immutablility
+Enums are created and loaded at runtime, so you cannot add further Enums later on, which adds to the aspect of Enum immutablility, found in Roblox's primitive Enum types.
+
+You can add new Enums inside the EnumPlus module at line 20, where the local variable CustomEnums is defined. </br>
+<code>local CustomEnums = {
+	ExampleEnum = {
+		EnumValue0 = (0 :: CustomEnumItem),
+		EnumValue1 = (1 :: CustomEnumItem),
+		EnumValue2 = (2 :: CustomEnumItem),
+	},
+}</code>
