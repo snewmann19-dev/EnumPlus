@@ -11,11 +11,11 @@ As it is a standalone module, there are zero dependencies, installation is as ea
 
 Enums are created and loaded at runtime, so you cannot add further Enums later on, which adds to the aspect of Enum immutablility, found in Roblox's primitive Enum types.
 
-You can add new Enums inside the EnumPlus module at line 20, where the local variable CustomEnums is defined. </br>
+You can add new Enums inside the EnumPlus module at line 20, where the local variable CustomEnums is defined, remember that every value that is assigned has to be formatted like: <code>(‘integer’ :: CustomEnumItem)</code>, to have typechecking. </br>
 <code>local CustomEnums = {
-    ExampleEnum = {
-        EnumValue0 = (0 :: CustomEnumItem),
-        EnumValue1 = (1 :: CustomEnumItem),
-        EnumValue2 = (2 :: CustomEnumItem),
-     },
+	ExampleEnum = {
+		EnumValue0 = (0 :: CustomEnumItem),
+		EnumValue1 = (1 :: CustomEnumItem),
+		EnumValue2 = (2 :: CustomEnumItem),
+	},
 }</code>
