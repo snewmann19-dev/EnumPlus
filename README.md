@@ -2,7 +2,7 @@
 
 **EnumPlus** is a Lua module that brings **custom enumeration functionality** to Roblox, mimicking the behavior and structure of Roblox’s native `Enum` system.
 
-Roblox’s core Enums are primitive number values, but Roblox does not support custom Enums natively. EnumPlus fills this gap by allowing developers to create fully-featured, type-aware, immutable custom Enums that behave like Roblox’s built-in Enums.
+Roblox’s core Enums are primitive number values, that are sorted into groups like Enum.Keycode, with each EnumItem containing a `Name`, `Value`, and `EnumType`. The issue is that Roblox does not support custom Enums natively. EnumPlus fills this gap by allowing developers to create fully-featured, type-aware, immutable custom Enums that behave like Roblox’s built-in Enums.
 
 ---
 
@@ -21,7 +21,7 @@ Roblox’s core Enums are primitive number values, but Roblox does not support c
   Once defined, Enums cannot be changed or extended at runtime, mimicking the behavior of native Roblox Enums.
 
 - **Standalone Module**  
-  No dependencies—just require the module:
+  No dependencies, just require the module:
 
   ```lua
   local EnumPlus = require(path.to.EnumPlus)
